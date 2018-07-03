@@ -13,7 +13,6 @@ class PgDbSingleton:
 
     def connect(self, user, password, db, host='localhost', port=5432):
         """
-
         :param user:
         :param password:
         :param db:
