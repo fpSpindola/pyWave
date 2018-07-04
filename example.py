@@ -1,17 +1,24 @@
+import ujson as ujson
+
 from pywave import PyWave
 from pywave.recognize import FileRecognizer, MicrophoneRecognizer
+from pywave.config import Config
 import warnings
-import json
+import os
 warnings.filterwarnings("ignore")
-
-# load config from a JSON file (or anything outputting a python dictionary)
-with open("pywave.cnf.SAMPLE") as f:
-    config = json.load(f)
 
 if __name__ == '__main__':
 
+    config_path = os.path.join(os.path.dirname(__file__), 'configs.json')
+    if os.path.exists(config_path):
+        with open(config_path) as c:
+            loaded_config = Config(ujson.loads(c.read()))
+            Config.current = loaded_config
+    else:
+        raise Exception('Please create the config file at: {}'.format(config_path))
+
     # create a Dejavu instance
-    djv = PyWave(config)
+    djv = PyWave(loaded_config)
 
     # Fingerprint all the mp3's in the directory we give it
     djv.fingerprint_directory("mp3", [".mp3"])

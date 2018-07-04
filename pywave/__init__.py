@@ -1,4 +1,4 @@
-from pywave.database import get_database, Database
+from pywave.database.base import get_database, Database
 import pywave.decoder as decoder
 from pywave import fingerprint
 import multiprocessing
@@ -21,12 +21,6 @@ class PyWave:
 
         self.config = config
 
-        # initialize db
-        db_cls = get_database(config.get("database_type", None))
-
-        self.db = db_cls(**config.get("database", {}))
-        self.db.setup()
-
         # if we should limit seconds fingerprinted,
         # None|-1 means use entire track
         self.limit = self.config.get("fingerprint_limit", None)
@@ -36,7 +30,7 @@ class PyWave:
 
     def get_fingerprinted_songs(self):
         # get songs previously indexed
-        self.songs = self.db.get_songs()
+        self.songs = self.config.db.get_songs()
         self.songhashes_set = set()  # to know which ones we've computed before
         for song in self.songs:
             song_hash = song[Database.FIELD_FILE_SHA1]
@@ -84,10 +78,10 @@ class PyWave:
                 # Print traceback because we can't reraise it here
                 traceback.print_exc(file=sys.stdout)
             else:
-                sid = self.db.insert_song(song_name, file_hash)
+                sid = self.config.current.db.insert_song(song_name, file_hash)
 
-                self.db.insert_hashes(sid, hashes)
-                self.db.set_song_fingerprinted(sid)
+                self.config.current.insert_hashes(sid, hashes)
+                self.config.current.set_song_fingerprinted(sid)
                 self.get_fingerprinted_songs()
 
         pool.close()
@@ -106,15 +100,15 @@ class PyWave:
                 self.limit,
                 song_name=song_name
             )
-            sid = self.db.insert_song(song_name, file_hash)
+            sid = self.config.current.db.insert_song(song_name, file_hash)
 
-            self.db.insert_hashes(sid, hashes)
-            self.db.set_song_fingerprinted(sid)
+            self.config.current.db.insert_hashes(sid, hashes)
+            self.config.current.db.set_song_fingerprinted(sid)
             self.get_fingerprinted_songs()
 
     def find_matches(self, samples, Fs=fingerprint.DEFAULT_FS):
         hashes = fingerprint.fingerprint(samples, Fs=Fs)
-        return self.db.return_matches(hashes)
+        return self.config.current.db.return_matches(hashes)
 
     def align_matches(self, matches):
         """
@@ -142,7 +136,7 @@ class PyWave:
                 song_id = sid
 
         # extract idenfication
-        song = self.db.get_song_by_id(song_id)
+        song = self.config.current.db.get_song_by_id(song_id)
         if song:
             # TODO: Clarify what `get_song_by_id` should return.
             songname = song.get(PyWave.SONG_NAME, None)
@@ -154,12 +148,12 @@ class PyWave:
                          fingerprint.DEFAULT_WINDOW_SIZE *
                          fingerprint.DEFAULT_OVERLAP_RATIO, 5)
         song = {
-            PyWave.SONG_ID : song_id,
-            PyWave.SONG_NAME : songname,
-            PyWave.CONFIDENCE : largest_count,
-            PyWave.OFFSET : int(largest),
-            PyWave.OFFSET_SECS : nseconds,
-            Database.FIELD_FILE_SHA1 : song.get(Database.FIELD_FILE_SHA1, None),}
+            PyWave.SONG_ID: song_id,
+            PyWave.SONG_NAME: songname,
+            PyWave.CONFIDENCE: largest_count,
+            PyWave.OFFSET: int(largest),
+            PyWave.OFFSET_SECS: nseconds,
+            Database.FIELD_FILE_SHA1: song.get(Database.FIELD_FILE_SHA1, None), }
         return song
 
     def recognize(self, recognizer, *options, **kwoptions):

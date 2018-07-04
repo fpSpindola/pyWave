@@ -1,0 +1,12 @@
+{
+  "config": {
+    "database": {
+      "host": "localhost",
+      "user": "postgres",
+      "password": "Epilif23",
+      "db": "pywave",
+      "port": 5432
+    },
+    "db_type": "postgres"
+  }
+}

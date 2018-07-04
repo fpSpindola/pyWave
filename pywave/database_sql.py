@@ -11,7 +11,7 @@ except ImportError:
 import MySQLdb as mysql
 from MySQLdb.cursors import DictCursor
 
-from pywave.database import Database
+from pywave.database.base import Database
 
 
 class SQLDatabase(Database):
