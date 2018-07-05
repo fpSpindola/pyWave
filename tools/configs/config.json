@@ -3,7 +3,7 @@
     "database": {
       "host": "localhost",
       "user": "postgres",
-      "password": "Epilif23",
+      "password": "test123",
       "db": "pywave",
       "port": 5432
     },
