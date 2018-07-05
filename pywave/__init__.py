@@ -23,7 +23,7 @@ class PyWave:
 
         # if we should limit seconds fingerprinted,
         # None|-1 means use entire track
-        self.limit = self.config.get("fingerprint_limit", None)
+        self.limit = self.config("fingerprint_limit", None)
         if self.limit == -1:  # for JSON compatibility
             self.limit = None
         self.get_fingerprinted_songs()
