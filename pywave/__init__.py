@@ -1,10 +1,10 @@
 from pywave.database.base import get_database, Database
-import pywave.decoder as decoder
 from pywave import fingerprint
+import pywave.decoder as decoder
 import multiprocessing
-import os
 import traceback
 import sys
+import os
 
 
 class PyWave:
@@ -23,7 +23,7 @@ class PyWave:
 
         # if we should limit seconds fingerprinted,
         # None|-1 means use entire track
-        self.limit = self.config("fingerprint_limit", None)
+        self.limit = self.config.fingerprint_limit
         if self.limit == -1:  # for JSON compatibility
             self.limit = None
         self.get_fingerprinted_songs()

@@ -1,18 +1,20 @@
 import sqlalchemy
 
 from pywave.database.base import Database
+from pywave.database.postgres import sqls
 
 
 class PgDbSingleton(Database):
 
     instance = None
 
-    def __init__(self):
+    def __init__(self, *options):
         super().__init__()
+        self.database = self.instance.connect(*options)[0]
 
     def __new__(cls, *args, **kwargs):
         if cls.instance is None:
-            cls.instance = super(PgDbSingleton, cls).__new__(cls, *args, **kwargs)
+            cls.instance = super(PgDbSingleton, cls).__new__(cls)
         return cls.instance
 
     def connect(self, user, password, db, host='localhost', port=5432):
@@ -48,7 +50,9 @@ class PgDbSingleton(Database):
         pass
 
     def get_songs(self):
-        pass
+        data = self.database.execute(sqls.SELECT_SONGS)
+        if data:
+            return data.fetchall()
 
     def get_song_by_id(self, sid):
         pass

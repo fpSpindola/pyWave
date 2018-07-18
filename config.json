@@ -1,0 +1,13 @@
+{
+  "pywave": {
+    "database": {
+      "host": "localhost",
+      "user": "postgres",
+      "password": "test123!",
+      "db": "pywave",
+      "port": 5432
+    },
+    "db_type": "postgres",
+    "fingerprint_limit": ""
+  }
+}

@@ -14,8 +14,8 @@ def parse_requirements(requirements):
         reqs = filter((lambda x: x), nocomments)
         return reqs
 
-PACKAGE_NAME = "PyDejavu"
-PACKAGE_VERSION = "0.1.3"
+PACKAGE_NAME = "pyWave"
+PACKAGE_VERSION = "0.0.1"
 SUMMARY = 'Dejavu: Audio Fingerprinting in Python'
 DESCRIPTION = """
 Audio fingerprinting and recognition algorithm implemented in Python

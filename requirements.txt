@@ -12,3 +12,4 @@ six==1.10.0
 wavio==0.0.3
 psycopg2==2.7.5
 sqlalchemy==1.2.9
+ujson

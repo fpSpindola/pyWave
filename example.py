@@ -1,15 +1,14 @@
+import os
+import warnings
 import ujson as ujson
-
 from pywave import PyWave
 from pywave.recognize import FileRecognizer, MicrophoneRecognizer
 from pywave.config import Config
-import warnings
-import os
 warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
 
-    config_path = os.path.join(os.path.dirname(__file__), 'configs.json')
+    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
     if os.path.exists(config_path):
         with open(config_path) as c:
             loaded_config = Config(ujson.loads(c.read()))
