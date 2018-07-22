@@ -10,7 +10,7 @@ class Songs(Base):
 
     song_id = Column(Integer, primary_key=True, nullable=False, unique=True)
     song_name = Column(String(250), nullable=False)
-    fingerprinted = Column(SmallInteger, nullable=False)
+    fingerprinted = Column(SmallInteger, nullable=True)
     file_sha1 = Column(Binary(20), nullable=False)
 
 

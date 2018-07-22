@@ -60,8 +60,9 @@ class PgDbSingleton(Database):
     def insert(self, hash, sid, offset):
         pass
 
-    def insert_song(self, song_name):
-        pass
+    def insert_song(self, song_name, file_hash):
+        insert_song_query = f"""INSERT INTO {sqls.SONGS_TABLENAME} (song_name, file_sha1) values ('{song_name}', '{file_hash}');"""
+        self.database.execute(sqlalchemy.text(insert_song_query))
 
     def query(self, hash):
         pass

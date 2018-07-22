@@ -104,7 +104,7 @@ class Database(object):
         pass
 
     @abc.abstractmethod
-    def insert_song(self, song_name):
+    def insert_song(self, song_name, file_hash):
         """
         Inserts a song name into the database, returns the new
         identifier of the song.

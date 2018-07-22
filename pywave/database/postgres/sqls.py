@@ -47,6 +47,7 @@ INSERT_FINGERPRINT = """
 INSERT_SONG = "INSERT INTO %s (%s, %s) values (%%s, UNHEX(%%s));" % (
     SONGS_TABLENAME, Database.FIELD_SONGNAME, Database.FIELD_FILE_SHA1)
 
+INSERT_SONG = f"""INSERT INTO {SONGS_TABLENAME} (song_name, file_sha1) values (:song_name, :song_hash)"""
 # selects
 SELECT = """
         SELECT %s, %s FROM %s WHERE %s = UNHEX(%%s);
