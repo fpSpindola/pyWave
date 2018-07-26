@@ -45,7 +45,7 @@ class PyWave:
         else:
             nprocesses = 1 if nprocesses <= 0 else nprocesses
 
-        pool = multiprocessing.Pool(nprocesses)
+        pool = multiprocessing.Pool(1)
 
         filenames_to_fingerprint = []
         for filename, _ in decoder.find_files(path, extensions):
@@ -80,8 +80,8 @@ class PyWave:
             else:
                 sid = self.config.current.db.insert_song(song_name, file_hash)
 
-                self.config.current.insert_hashes(sid, hashes)
-                self.config.current.set_song_fingerprinted(sid)
+                self.config.current.db.insert_hashes(sid, hashes)
+                self.config.current.db.set_song_fingerprinted(sid)
                 self.get_fingerprinted_songs()
 
         pool.close()
