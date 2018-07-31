@@ -1,9 +1,12 @@
 import sqlalchemy
 from itertools import zip_longest
+
+from sqlalchemy import update
 from sqlalchemy.exc import ProgrammingError, IntegrityError
 from sqlalchemy.orm import sessionmaker
 from pywave.database.base import Database
-from pywave.database.postgres import sqls, mapping
+from pywave.database.postgres import sqls
+from pywave.database.postgres.mapping import Songs, Fingerprints
 
 
 class PgDbSingleton(Database):
@@ -50,29 +53,28 @@ class PgDbSingleton(Database):
         pass
 
     def set_song_fingerprinted(self, sid):
-        pass
+        song_fingerprinted = update(Songs).where(Songs.song_id==sid).values(fingerprinted=1)
+        self.session.execute(song_fingerprinted)
+        self.session.commit()
 
     def get_songs(self):
-        data = self.database.execute(sqls.SELECT_SONGS)
-        if data:
-            return data.fetchall()
+
+        songs = self.session.query(Songs).filter(Songs.fingerprinted==1).all()
+        return songs
 
     def get_song_by_id(self, sid):
-        pass
+        song = self.session.query(Songs).filter(Songs.song_id == sid).scalar()
+        return song if song else None
 
     def insert(self, hash, sid, offset):
         pass
 
     def insert_song(self, song_name, file_hash):
 
-        song_table = mapping.Songs(song_name=song_name, file_sha1=file_hash.encode())
-        self.session.add(song_table)
-        asd = self.session.commit()
-        return asd
-
-        # insert_song_query = f"""INSERT INTO {sqls.SONGS_TABLENAME} (song_name, file_sha1) values ('{song_name}', '{file_hash}');"""
-        # cur = self.database.execute(sqlalchemy.text(insert_song_query))
-        # return cur.lastrowid
+        song = Songs(song_name=song_name, file_sha1=file_hash.encode())
+        self.session.add(song)
+        self.session.commit()
+        return song.song_id
 
     def query(self, hash):
         pass
@@ -87,12 +89,12 @@ class PgDbSingleton(Database):
 
         for split_values in grouper(values, 1000):
             for item in list(split_values):
-                a_hash = item[0].encode()
+                a_hash = item[0]
                 a_songid = item[1]
                 a_offset = item[2]
-                fingerprint_data = mapping.Fingerprints(hash=a_hash, song_id=int(a_songid), offset=int(a_offset))
+                fingerprint = Fingerprints(hash=a_hash, song_id=int(a_songid), offset=int(a_offset))
                 try:
-                    self.session.add(fingerprint_data)
+                    self.session.add(fingerprint)
                     self.session.commit()
                 except ProgrammingError as e:
                     print(e)
@@ -103,7 +105,23 @@ class PgDbSingleton(Database):
         print('Done inserting hashes')
 
     def return_matches(self, hashes):
-        pass
+        """
+        Return the (song_id, offset_diff) tuples associated with
+        a list of (sha1, sample_offset) values.
+        """
+        # Create a dictionary of hash => offset pairs for later lookups
+        mapper = {}
+        for hash, offset in hashes:
+            mapper[hash.upper()] = offset
+
+        # Get an iteratable of all the hashes we need
+        values = mapper.keys()
+        for split_values in grouper(values, 1000):
+            split_values = list(split_values)
+            result = self.session.query(Fingerprints).filter(Fingerprints.hash.in_(split_values)).all()
+            for each in result:
+                print(each.song_id, each.offset - mapper[each.hash])
+                yield (each.song_id, each.offset - mapper[each.hash])
 
 
 def grouper(iterable, n, fillvalue=None):

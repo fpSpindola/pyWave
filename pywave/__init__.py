@@ -33,7 +33,7 @@ class PyWave:
         self.songs = self.config.db.get_songs()
         self.songhashes_set = set()  # to know which ones we've computed before
         for song in self.songs:
-            song_hash = song[Database.FIELD_FILE_SHA1]
+            song_hash = song.file_sha1.decode()
             self.songhashes_set.add(song_hash)
 
     def fingerprint_directory(self, path, extensions, nprocesses=None):
@@ -45,7 +45,7 @@ class PyWave:
         else:
             nprocesses = 1 if nprocesses <= 0 else nprocesses
 
-        pool = multiprocessing.Pool(1)
+        pool = multiprocessing.Pool(nprocesses)
 
         filenames_to_fingerprint = []
         for filename, _ in decoder.find_files(path, extensions):
@@ -79,7 +79,6 @@ class PyWave:
                 traceback.print_exc(file=sys.stdout)
             else:
                 sid = self.config.current.db.insert_song(song_name, file_hash)
-
                 self.config.current.db.insert_hashes(sid, hashes)
                 self.config.current.db.set_song_fingerprinted(sid)
                 self.get_fingerprinted_songs()
@@ -139,7 +138,7 @@ class PyWave:
         song = self.config.current.db.get_song_by_id(song_id)
         if song:
             # TODO: Clarify what `get_song_by_id` should return.
-            songname = song.get(PyWave.SONG_NAME, None)
+            songname = song.song_name
         else:
             return None
 
@@ -153,7 +152,7 @@ class PyWave:
             PyWave.CONFIDENCE: largest_count,
             PyWave.OFFSET: int(largest),
             PyWave.OFFSET_SECS: nseconds,
-            Database.FIELD_FILE_SHA1: song.get(Database.FIELD_FILE_SHA1, None), }
+            Database.FIELD_FILE_SHA1: song.file_sha1}
         return song
 
     def recognize(self, recognizer, *options, **kwoptions):
