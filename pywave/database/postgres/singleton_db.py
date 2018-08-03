@@ -3,10 +3,12 @@ from itertools import zip_longest
 
 from sqlalchemy import update
 from sqlalchemy.exc import ProgrammingError, IntegrityError
+from pywave.database.postgres.mapping import Songs, Fingerprints
+from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 from pywave.database.base import Database
 from pywave.database.postgres import sqls
-from pywave.database.postgres.mapping import Songs, Fingerprints
+
 
 
 class PgDbSingleton(Database):
@@ -120,7 +122,6 @@ class PgDbSingleton(Database):
             split_values = list(split_values)
             result = self.session.query(Fingerprints).filter(Fingerprints.hash.in_(split_values)).all()
             for each in result:
-                print(each.song_id, each.offset - mapper[each.hash])
                 yield (each.song_id, each.offset - mapper[each.hash])
 
 

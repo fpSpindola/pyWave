@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
 
-    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+    config_path = os.path.join(os.path.dirname(__file__), 'dejavu.cnf.SAMPLE')
     if os.path.exists(config_path):
         with open(config_path) as c:
             loaded_config = Config(ujson.loads(c.read()))

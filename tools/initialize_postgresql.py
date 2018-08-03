@@ -6,7 +6,3 @@ connection, meta = PgDbSingleton('postgres', 'Epilif23', 'pywave', 'localhost').
 Base.metadata.drop_all(connection)
 
 Base.metadata.create_all(connection)
-
-
-
-

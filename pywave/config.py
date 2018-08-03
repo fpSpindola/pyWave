@@ -7,15 +7,16 @@ class Config(object):
     current = None
 
     def __init__(self, configs: dict):
-        if configs['pywave'].get("db_type") == 'postgres':
-            self.db = PgDbSingleton(configs['pywave']['database']['user'],
-                                    configs['pywave']['database']['password'],
-                                    configs['pywave']['database']['db'],
-                                    configs['pywave']['database']['host'],
-                                    configs['pywave']['database']['port'])
+        if configs.get('pywave'):
+            if configs['pywave'].get("db_type") == 'postgres':
+                self.db = PgDbSingleton(configs['pywave']['database']['user'],
+                                        configs['pywave']['database']['password'],
+                                        configs['pywave']['database']['db'],
+                                        configs['pywave']['database']['host'],
+                                        configs['pywave']['database']['port'])
         else:
-            self.db = get_database(**configs.get('database'))
+            self.db = get_database()
             self.db.setup()
         self.fingerprint_limit = configs.get('fingerprint_limit', None)
 
-
+import pywave.database_sql

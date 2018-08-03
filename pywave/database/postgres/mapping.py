@@ -18,7 +18,7 @@ class Fingerprints(Base):
     __tablename__ = 'fingerprints'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    hash = Column(Binary(20), nullable=False, index=True)
+    hash = Column(Binary(10), nullable=False, index=True)
     song_id = Column(Integer, ForeignKey('songs.song_id'), nullable=False)
     offset = Column(Integer, nullable=False)
     __table_args__ = (UniqueConstraint('hash', 'song_id', 'offset', name='uix_1'), )
