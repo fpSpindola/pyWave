@@ -114,7 +114,7 @@ class PgDbSingleton(Database):
         # Create a dictionary of hash => offset pairs for later lookups
         mapper = {}
         for hash, offset in hashes:
-            mapper[hash.upper()] = offset
+            mapper[hash] = offset
 
         # Get an iteratable of all the hashes we need
         values = mapper.keys()

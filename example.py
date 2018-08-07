@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
 
-    config_path = os.path.join(os.path.dirname(__file__), 'dejavu.cnf.SAMPLE')
+    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
     if os.path.exists(config_path):
         with open(config_path) as c:
             loaded_config = Config(ujson.loads(c.read()))
@@ -36,5 +36,5 @@ if __name__ == '__main__':
 
     # Or use a recognizer without the shortcut, in anyway you would like
     recognizer = FileRecognizer(djv)
-    song = recognizer.recognize_file("mp3/Josh-Woodward--I-Want-To-Destroy-Something-Beautiful.mp3")
+    song = recognizer.recognize_file("mp3/Brad-Sucks--Total-Breakdown.mp3")
     print(f"No shortcut, we recognized: {song}")
