@@ -20,7 +20,6 @@ if __name__ == '__main__':
     # create a Dejavu instance
     djv = PyWave(loaded_config)
 
-
     # Recognize audio from a file
     song = djv.recognize(FileRecognizer, "mp3/Sean-Fournier--Falling-For-You.mp3")
     print(f"From file we recognized: {song}")
