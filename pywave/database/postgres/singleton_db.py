@@ -97,13 +97,13 @@ class PgDbSingleton(Database):
                 fingerprint = Fingerprints(hash=a_hash, song_id=int(a_songid), offset=int(a_offset))
                 try:
                     self.session.add(fingerprint)
-                    self.session.commit()
                 except ProgrammingError as e:
                     print(e)
                     continue
                 except IntegrityError as e:
                     print(e)
                     continue
+        self.session.commit()
         print('Done inserting hashes')
 
     def return_matches(self, hashes):
